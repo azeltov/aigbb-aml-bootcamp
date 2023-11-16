@@ -10,9 +10,6 @@ from sklearn.model_selection import train_test_split
 def main():
     """Main function of the script."""
 
-    # Load a file named conda.yml into memory
-    
-
     # input and output arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=str, help="path to input data")
@@ -35,7 +32,9 @@ def main():
 
     print("input data:", args.data)
     
-    credit_df = pd.read_csv(args.data, header=1, index_col=0)
+    # credit_df = pd.read_csv(args.data, header=1, index_col=0)
+    credit_df = pd.read_parquet(args.data)
+    print(credit_df.head(3))    
 
     mlflow.log_metric("num_samples", credit_df.shape[0])
     mlflow.log_metric("num_features", credit_df.shape[1] - 1)
@@ -53,13 +52,13 @@ def main():
     #<train the model>
     ##################
     # Extracting the label column
-    y_train = train_df.pop("default payment next month")
+    y_train = train_df.pop("default")
 
     # convert the dataframe values to array
     X_train = train_df.values
 
     # Extracting the label column
-    y_test = test_df.pop("default payment next month")
+    y_test = test_df.pop("default")
 
     # convert the dataframe values to array
     X_test = test_df.values
@@ -92,14 +91,11 @@ def main():
     # Saving the model to a file
     mlflow.sklearn.save_model(
         sk_model=clf,
-#        path=os.path.join(args.registered_model_name, "trained_model"),
-         path=args.registered_model_name,
+        path=os.path.join(args.registered_model_name, "trained_model"),
     )
     ###########################
     #</save and register model>
     ###########################
-
-    print(f"Saved trained model to path: {args.registered_model_name}")
     
     # Stop Logging
     mlflow.end_run()
