@@ -26,6 +26,9 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: Create Pipeline Environment
+      run: |
+        az ml environment create --file ./dependencies/job_env.yml
     - name: Set Azure ML workspace as default
       run: |
         az configure --defaults group="${{ github.event.inputs.resource_group }}"
