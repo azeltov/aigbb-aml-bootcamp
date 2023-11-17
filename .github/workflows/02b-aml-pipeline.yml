@@ -32,8 +32,7 @@ jobs:
         az configure --defaults workspace="${{ github.event.inputs.aml_workspace }}"
     - name: Create Pipeline Environment
       run: |
-        cd src
-        az ml environment create --file ../dependencies/job_env.yml
+        az ml environment create --file ./dependencies/job_env.yml
     - name: Run AML Pipeline Job
       run: |
         cd src
